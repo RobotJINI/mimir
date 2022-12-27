@@ -4,6 +4,7 @@ from sensors.veml6070_uv import LightSensor
 from sensors.wind import WindSensor
 from sensors.rain import RainSensor
 from sensors.wind_direction import WindDirectionSensor
+from model.database import WeatherDatabase
 
 import time
 from datetime import datetime
@@ -13,7 +14,7 @@ from threading import Thread
 class Mimir:
     def __init__(self):
         self._running = True
-        self._interval = 1
+        self._interval = .1
         
         self._air_sensor = AirSensor()
         self._ground_sensor = GroundSensor()
@@ -21,6 +22,8 @@ class Mimir:
         self._wind_sensor = WindSensor()
         self._rain_sensor = RainSensor()
         self._wind_direction_sensor = WindDirectionSensor()
+        
+        self._weather_database = WeatherDatabase()
         
         self._wind_thread = None
         self._rain_thread = None
@@ -61,16 +64,27 @@ class Mimir:
         self._wind_direction_sensor.update()
         
     def _record(self):
-        self._print_debug()
+        self._weather_database.insert(self._get_time_ms(), self._air_sensor.temperature, self._air_sensor.pressure, self._air_sensor.humidity, 
+                                      self._ground_sensor.temperature, self._light_sensor.uv, self._light_sensor.risk_level, self._wind_sensor.wind_speed,
+                                      self._rain_sensor.rainfall, self._rain_sensor.rain_rate, self._wind_direction_sensor.wind_direction)
         
-    def _print_debug(self):
-        print(f'\nReading({datetime.now()}):')
+    def _get_time_ms(self):
+        return time.time() * 1000
+        
+    def _print_debug(self):        
+        '''print(f'\nReading({datetime.now()}):')
         print(f'Temperature:{self._air_sensor.temperature}, Pressure:{self._air_sensor.pressure}, Humidity:{self._air_sensor.humidity}')
         print(f'Ground Temperature:{self._ground_sensor.temperature}')
         print(f'UV: {self._light_sensor.uv} | Risk Level: {self._light_sensor.risk_level}')
         print(f'Wind Speed:{self._wind_sensor.wind_speed}')
         print(f'Rainfall:{self._rain_sensor.rainfall}, Rain Rate:{self._rain_sensor.rain_rate}')
-        print(f'Wind Direction:{self._wind_direction_sensor.values}')
+        print(f'Wind Direction:{self._wind_direction_sensor.values}, Count:{len(self._wind_direction_sensor.values)}')
+        '''
+        
+        print(f'INSERT INTO weather_measurement (time, air_temp, pressure, humidity, ground_temp, uv, uv_risk_lv, wind_speed, rainfall, rain_rate, wind_dir) ' +
+              f'VALUES({self._get_time_ms()},{self._air_sensor.temperature},{self._air_sensor.pressure},{self._air_sensor.humidity},' +
+              f'{self._ground_sensor.temperature},{self._light_sensor.uv},{self._light_sensor.risk_level},{self._wind_sensor.wind_speed},' +
+              f'{self._rain_sensor.rainfall},{self._rain_sensor.rain_rate},{self._wind_direction_sensor.wind_direction})')
     
 
 def main():
@@ -87,3 +101,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    

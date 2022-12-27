@@ -1,5 +1,4 @@
 from gpiozero import MCP3008
-import time
 
 
 class WindDirectionSensor:
@@ -27,7 +26,7 @@ class WindDirectionSensor:
         
     def update(self):
         
-        dir_val = round(self._adc.value*3.3, 1)
+        dir_val = round(self._adc.value, 2)
         
         if dir_val not in self.values:
             self.values.append(dir_val)
