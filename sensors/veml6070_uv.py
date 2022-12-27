@@ -1,4 +1,3 @@
-import time
 import board
 import adafruit_veml6070
 
@@ -11,5 +10,5 @@ class LightSensor:
         self.risk_level = 0
     
     def update(self):
-        self.uv_raw = self._veml.uv_raw
-        self.risk_level = self._veml.get_index(self.uv_raw)
+        self.uv = self._veml.uv_raw
+        self.risk_level = self._veml.get_index(self.uv)

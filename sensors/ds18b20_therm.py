@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-import os, glob, time
+import glob
 
 
 class GroundSensor:
@@ -10,17 +9,8 @@ class GroundSensor:
         self.temperature = 0
         
     def update(self):
-        temp_c = -255
-        attempts = 0
-        
         lines = self._read_temp_raw()
         success = self._crc_check(lines)
-        
-        while not success and attempts < 3:
-            time.sleep(.1)
-            lines = self._read_temp_raw()            
-            success = self._crc_check(lines)
-            attempts += 1
         
         if success:
             temp_line = lines[1]

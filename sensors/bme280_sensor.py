@@ -1,6 +1,5 @@
 import bme280
 import smbus2
-from time import sleep
 
 class AirSensor:
     def __init__(self, port=1, address=0x77, is_celsuis=False):
