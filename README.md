@@ -25,3 +25,6 @@ wind_dir INT NOT NULL,
 PRIMARY KEY (id)
 );
 
+Proto compile:
+
+python3 -m grpc_tools.protoc -I=./protos/ --python_out=./model/ --grpc_python_out=./server/ ./protos/weather_measurement.proto

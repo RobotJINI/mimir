@@ -29,7 +29,7 @@ class Mimir:
         self._rain_thread = None
     
     def run(self):
-        print("Running ....")
+        print('Running ....')
         
         self._start_sensors()
         
@@ -40,13 +40,13 @@ class Mimir:
             time.sleep(self._interval)
         
     def stop(self):
-        print("Stopping ....")
+        print('Stopping ....')
         self._wind_sensor.stop()
         self._rain_sensor.stop()
         
         self._wind_thread.join()
         self._rain_thread.join()
-        print("Done!")
+        print('Done!')
         
     def _start_sensors(self):
         self._wind_thread = Thread(target=self._wind_sensor.run)
@@ -71,21 +71,6 @@ class Mimir:
     def _get_time_ms(self):
         return time.time() * 1000
         
-    def _print_debug(self):        
-        '''print(f'\nReading({datetime.now()}):')
-        print(f'Temperature:{self._air_sensor.temperature}, Pressure:{self._air_sensor.pressure}, Humidity:{self._air_sensor.humidity}')
-        print(f'Ground Temperature:{self._ground_sensor.temperature}')
-        print(f'UV: {self._light_sensor.uv} | Risk Level: {self._light_sensor.risk_level}')
-        print(f'Wind Speed:{self._wind_sensor.wind_speed}')
-        print(f'Rainfall:{self._rain_sensor.rainfall}, Rain Rate:{self._rain_sensor.rain_rate}')
-        print(f'Wind Direction:{self._wind_direction_sensor.values}, Count:{len(self._wind_direction_sensor.values)}')
-        '''
-        
-        print(f'INSERT INTO weather_measurement (time, air_temp, pressure, humidity, ground_temp, uv, uv_risk_lv, wind_speed, rainfall, rain_rate, wind_dir) ' +
-              f'VALUES({self._get_time_ms()},{self._air_sensor.temperature},{self._air_sensor.pressure},{self._air_sensor.humidity},' +
-              f'{self._ground_sensor.temperature},{self._light_sensor.uv},{self._light_sensor.risk_level},{self._wind_sensor.wind_speed},' +
-              f'{self._rain_sensor.rainfall},{self._rain_sensor.rain_rate},{self._wind_direction_sensor.wind_direction})')
-    
 
 def main():
     mimir = Mimir()
