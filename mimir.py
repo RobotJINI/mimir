@@ -25,7 +25,7 @@ class Mimir:
         self._wind_direction_sensor = WindDirectionSensor()
         
         self._weather_database = WeatherDatabase()
-        self._weather_server = WeatherServer(self._weather_database)
+        self._weather_server = WeatherServer()
         
         self._wind_thread = None
         self._rain_thread = None

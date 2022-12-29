@@ -13,6 +13,7 @@ class WeatherDatabase:
 
     def insert(self, time, air_temp, pressure, humidity, ground_temp, uv, uv_risk_lv, wind_speed, rainfall, rain_rate, wind_dir):
         params = (time, air_temp, pressure, humidity, ground_temp, uv, uv_risk_lv, wind_speed, rainfall, rain_rate, wind_dir)
+        print(self._insert_template % params)
         self._db.execute(self._insert_template, params)
         
     def query(self, start_time, end_time):

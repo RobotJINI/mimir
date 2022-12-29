@@ -137,5 +137,7 @@ dmypy.json
 *.pub
 mimir
 pepe-command
+.~lock.pepe-command.pub#
+.settings/*
 
 

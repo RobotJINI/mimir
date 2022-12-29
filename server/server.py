@@ -5,13 +5,14 @@ import grpc
 import time
 import model.weather_measurement_pb2 as weather_measurement_pb2
 import server.weather_measurement_pb2_grpc as weather_measurement_pb2_grpc
+from model.database import WeatherDatabase
 
 
 class WeatherServer(weather_measurement_pb2_grpc.WeatherServer):    
-    def __init__(self, weather_database, port='50051'):
+    def __init__(self, port='50051'):
         self._port = port
         self._server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-        weather_measurement_pb2_grpc.add_WeatherServerServicer_to_server(self.WeatherGrpcServer(weather_database), self._server)
+        weather_measurement_pb2_grpc.add_WeatherServerServicer_to_server(self.WeatherGrpcServer(), self._server)
         self._server.add_insecure_port('[::]:' + self._port)
         self._running = False
         
@@ -27,10 +28,10 @@ class WeatherServer(weather_measurement_pb2_grpc.WeatherServer):
         
         
     class WeatherGrpcServer(weather_measurement_pb2_grpc.WeatherServer):
-        def __init__(self, weather_database):
+        def __init__(self):
             weather_measurement_pb2_grpc.WeatherServer.__init__(self)
             
-            self._weather_database = weather_database
+            self._weather_database = WeatherDatabase()
 
         def get_measurements(self, request, context):
             try:
