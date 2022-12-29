@@ -5,6 +5,7 @@ from sensors.wind import WindSensor
 from sensors.rain import RainSensor
 from sensors.wind_direction import WindDirectionSensor
 from model.database import WeatherDatabase
+from server.server import WeatherServer
 
 import time
 from datetime import datetime
@@ -24,9 +25,11 @@ class Mimir:
         self._wind_direction_sensor = WindDirectionSensor()
         
         self._weather_database = WeatherDatabase()
+        self._weather_server = WeatherServer(self._weather_database)
         
         self._wind_thread = None
         self._rain_thread = None
+        self._weather_server_thread = None
     
     def run(self):
         print('Running ....')
@@ -41,9 +44,11 @@ class Mimir:
         
     def stop(self):
         print('Stopping ....')
+        self._weather_server.stop()
         self._wind_sensor.stop()
         self._rain_sensor.stop()
         
+        self._weather_server_thread.join()
         self._wind_thread.join()
         self._rain_thread.join()
         print('Done!')
@@ -54,6 +59,9 @@ class Mimir:
         
         self._rain_thread = Thread(target=self._rain_sensor.run)
         self._rain_thread.start()
+        
+        self._weather_server_thread = Thread(target=self._weather_server.run)
+        self._weather_server_thread.start()
         
     def _update(self):
         self._air_sensor.update()
