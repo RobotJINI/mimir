@@ -16,3 +16,7 @@ rainfall DECIMAL(8,4) NOT NULL, rain_rate DECIMAL(8,4) NOT NULL, wind_dir DECIMA
 Proto compile:
 
 python3 -m grpc_tools.protoc -I=./protos/ --python_out=./model/ --grpc_python_out=./server/ ./protos/weather_measurement.proto
+
+Todo:
+change wind_dir database store from dgrees to raw value
+-add translation function to sensor and do it when retrieved from dB(allows me to fix lookup table because it might be wrong)

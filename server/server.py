@@ -43,6 +43,7 @@ class WeatherServer(weather_measurement_pb2_grpc.WeatherServer):
             
         def get_current_weather(self, request, context):
             try:
+                print("get_current_weather")
                 end_time = self._get_time_ms()
                 start_time = end_time - (request.duration * 1000)
                 weather_database = WeatherDatabase()
@@ -52,7 +53,7 @@ class WeatherServer(weather_measurement_pb2_grpc.WeatherServer):
                 average_wind_dir = weather_database.get_average_wind_dir(start_time, end_time)
                 
                 current_weather_response = self._query_to_current_weather_response(query_response, uv_risk_lv, average_wind_dir, end_time)
-                
+                print(current_weather_response)
                 return current_weather_response       
             except Exception as e:
                 print(f'Error get_current_weather failed!\n{e}')

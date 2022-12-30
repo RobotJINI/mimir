@@ -6,31 +6,32 @@ class WindDirectionSensor:
         self._adc = MCP3008(channel=0)
         
         self.wind_direction = -1
-        self._volts_to_degree = {0.4: 0.0,
-                                 1.4: 22.5,
-                                 1.2: 45.0,
-                                 2.8: 67.5,
-                                 2.7: 90,
-                                 2.9: 112.5,
-                                 2.2: 135.0,
-                                 2.5: 157.5,
-                                 1.8: 180.0,
-                                 2.0: 202.5,
-                                 0.7: 225.0,
-                                 0.8: 247.5,
-                                 0.1: 270.0,
-                                 0.3: 292.5,
-                                 0.2: 315.0,
-                                 0.6: 337.5}
+        self._volts_to_degree = {0.82: 0.0,
+                                 0.88: 22.5,
+                                 0.72: 45.0,
+                                 0.76: 67.5,
+                                 0.39: 90.0,
+                                 0.38: 90.0,
+                                 0.41: 112.5,
+                                 0.08: 135.0,
+                                 0.07: 135.0,
+                                 0.19: 157.5,
+                                 0.13: 180.0,
+                                 0.31: 202.5,
+                                 0.23: 225.0,
+                                 0.6: 247.5,
+                                 0.55: 270.0,
+                                 0.92: 292.5,
+                                 0.91: 315.0,
+                                 0.94: 337.5}
         self.values = []
+        self.deg_values = []
         
     def update(self):
         
         dir_val = round(self._adc.value, 2)
         
-        if dir_val not in self.values:
-            self.values.append(dir_val)
-        print(f'Values: {self.values}, Count: {len(self.values)}')
-        
+        self.wind_direction = -1
         if dir_val in self._volts_to_degree:
             self.wind_direction = self._volts_to_degree[dir_val]
+        

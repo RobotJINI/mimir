@@ -1,5 +1,6 @@
 import MySQLdb, datetime, http.client, json, os
 import io
+import math
 
 
 class WeatherDatabase:
@@ -26,7 +27,7 @@ class WeatherDatabase:
 
     def insert(self, time, air_temp, pressure, humidity, ground_temp, uv, uv_risk_lv, wind_speed, rainfall, rain_rate, wind_dir):
         params = (time, air_temp, pressure, humidity, ground_temp, uv, uv_risk_lv, wind_speed, rainfall, rain_rate, wind_dir)
-        print(f'{self._insert_template % params}\n')
+        print(self._insert_template % params)
         self._db.execute(self._insert_template, params)
         
     def get_historical_weather(self, start_time, end_time):
@@ -35,7 +36,6 @@ class WeatherDatabase:
     
     def get_current_weather(self, start_time, end_time):
         params = (start_time, end_time)
-        print(f'{self._current_weather_template % params}\n')
         return self._db.query(self._current_weather_template % params)
     
     def get_latest_uv_risk(self):
@@ -74,6 +74,7 @@ class WeatherDatabase:
             average = arc + 360
     
         return 0.0 if average == 360 else average
+    
     
     class MysqlDatabase:
         def __init__(self):
