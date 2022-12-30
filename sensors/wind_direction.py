@@ -30,6 +30,7 @@ class WindDirectionSensor:
         
         if dir_val not in self.values:
             self.values.append(dir_val)
+        print(f'Values: {self.values}, Count: {len(self.values)}')
         
         if dir_val in self._volts_to_degree:
             self.wind_direction = self._volts_to_degree[dir_val]

@@ -14,11 +14,15 @@ class WeatherDatabase:
                                
         self._current_weather_template = 'SELECT AVG(air_temp) as air_temp, AVG(pressure) as pressure, AVG(humidity) as humidity, ' + \
                                          'AVG(ground_temp) as ground_temp, AVG(uv) as uv, AVG(wind_speed) as wind_speed, MAX(wind_speed) as gust, ' + \
-                                         'AVG(rainfall) as rainfall, AVG(rain_rate) as rain_rate, AVG(wind_dir) as wind_dir ' + \
+                                         'AVG(rainfall) as rainfall, AVG(rain_rate) as rain_rate ' + \
                                          'FROM weather_measurement ' + \
                                          'WHERE time BETWEEN %s AND %s;'
                                          
-        self._get_latest_uv_template = 'SELECT uv_risk_lv FROM weather_measurement LIMIT 1;'
+        self._latest_uv_template = 'SELECT uv_risk_lv FROM weather_measurement LIMIT 1;'
+        
+        self._current_wind_dir_template = 'SELECT wind_dir ' + \
+                                          'FROM weather_measurement ' + \
+                                          'WHERE time BETWEEN %s AND %s AND NOT wind_dir=-1;'
 
     def insert(self, time, air_temp, pressure, humidity, ground_temp, uv, uv_risk_lv, wind_speed, rainfall, rain_rate, wind_dir):
         params = (time, air_temp, pressure, humidity, ground_temp, uv, uv_risk_lv, wind_speed, rainfall, rain_rate, wind_dir)
@@ -35,7 +39,41 @@ class WeatherDatabase:
         return self._db.query(self._current_weather_template % params)
     
     def get_latest_uv_risk(self):
-        return self._db.query(self._get_latest_uv_template)
+        query_response = self._db.query(self._latest_uv_template)
+        return query_response[0]['uv_risk_lv']
+    
+    def get_average_wind_dir(self, start_time, end_time):
+        params = (start_time, end_time)
+        query_response = self._db.query(self._current_wind_dir_template % params)
+        return self._average_wind_dir(query_response)
+    
+    def _average_wind_dir(self, query_response):
+        sin_sum = 0.0
+        cos_sum = 0.0
+        
+        flen = float(len(query_response))
+        if flen == 0:
+            return -1
+    
+        for angle_response in query_response:
+            angle = angle_response['wind_dir']
+            r = math.radians(angle)
+            sin_sum += math.sin(r)
+            cos_sum += math.cos(r)
+    
+        s = sin_sum / flen
+        c = cos_sum / flen
+        arc = math.degrees(math.atan(s / c))
+        average = 0.0
+    
+        if s > 0 and c > 0:
+            average = arc
+        elif c < 0:
+            average = arc + 180
+        elif s < 0 and c > 0:
+            average = arc + 360
+    
+        return 0.0 if average == 360 else average
     
     class MysqlDatabase:
         def __init__(self):
