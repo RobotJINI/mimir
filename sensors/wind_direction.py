@@ -4,7 +4,7 @@ from gpiozero import MCP3008
 class WindDirectionSensor:
     def __init__(self):
         self._adc = MCP3008(channel=0)
-        
+
         self.wind_direction = -1
         self._volts_to_degree = {0.82: 0.0,
                                  0.88: 22.5,
@@ -26,12 +26,12 @@ class WindDirectionSensor:
                                  0.94: 337.5}
         self.values = []
         self.deg_values = []
-        
+
     def update(self):
-        
-        dir_val = round(self._adc.value, 2)
-        
-        self.wind_direction = -1
-        if dir_val in self._volts_to_degree:
-            self.wind_direction = self._volts_to_degree[dir_val]
-        
+
+        dir_val = round(self._adc.value, 3)
+
+        self.wind_direction = dir_val
+        #todo: not working right, should do after grabbing from db
+        #if dir_val in self._volts_to_degree:
+        #    self.wind_direction = self._volts_to_degree[dir_val]
